@@ -1,5 +1,5 @@
 /*
- * Titulo:   Trabalho de estrutura de dados
+ * Titulo: Trabalho de estrutura de dados
  * Author: Alesson Sousa
  * Github: https://github.com/alessonsousa
  * Created on 6 de Março de 2020, 19:16
@@ -33,26 +33,20 @@ struct Produtos
 
 };
 
-//VARIAVEIS GLOBAIS
-int Dig = 0;
-int contProdu = 0;
-int valor;
-int qtdtotal;
-
-
 //FUNÇÕES
 void inicio();
 int cadastraProdu(Produtos *Produto,int contProdu);
-void listaproduto(Produtos *Produto);
-void buscarProduto(Produtos *Produto, int contProdu);
-void vendaProduto(Produtos *Produto);
-
+void listaproduto(Produtos *Produto, int ContProdu);
+int buscarProduto(Produtos *Produto, int contProdu);
+void vendaProduto(Produtos *Produto, int contProdu);
+void imprimi(Produtos Produto);
 
 //FUNÇÃO PRINCIPAL MAIN
 int main()
 {
-
-
+    int Dig = 0;
+    int contProdu = 0;
+    int Posicao = 0;
     Produtos Produto[NUM];
     do
     {
@@ -73,13 +67,15 @@ int main()
         {
 
         case 1:
-            vendaProduto(Produto);
+            vendaProduto(Produto, contProdu);
             break;
         case 2:
-            listaproduto(Produto);
+            listaproduto(Produto, contProdu);
             break;
         case 3:
-            buscarProduto(Produto, contProdu);
+        //POSICÃO ESTA RECEBENDO O VALOR DO RETORNO DE BUSCARPRODUTO
+            Posicao = buscarProduto(Produto, contProdu);
+            imprimi(Produto[Posicao]);
             break;
         case 4:
             contProdu = cadastraProdu(Produto, contProdu);
@@ -92,8 +88,8 @@ int main()
     while(Dig != 5);
     return 0;
 }
-//FUNÇÃO DE CADASTRA OS PRODUTOS
 
+//FUNÇÃO DE CADASTRA OS PRODUTOS
 int cadastraProdu(Produtos *Produto,int contProdu)
 {
     int op, i;
@@ -113,13 +109,28 @@ int cadastraProdu(Produtos *Produto,int contProdu)
     cin >> Produto[contProdu].quantidadeProduto;
 
     system("cls");
+    //QUANDO VOCÊ CADASTRA UM PRODUTO O CONTPRODU VAI
+    //SOMA MAIS 1 NO CONTPRODU++ E VAI RETORNA O VALOR DE DE CONTPRODU
     contProdu++;
     return contProdu;
 
 }
+//FUNÇÃO PARA IMPRIMI OS PRODUTOS BUSCADOS
+void imprimi(Produtos Produto)
+{
+
+    cout << "\t\tProduto do codigo: " << Produto.codigoProduto << endl;
+    cout << "--------------------------------------------------------\n";
+    cout << "Produto: " << Produto.nomeProduto << endl;
+    cout << "Preco:R$" << Produto.precoProduto << endl;
+    cout << "Quantidade: " << Produto.quantidadeProduto << endl;
+    cout << "--------------------------------------------------------\n\n";
+    system("pause");
+    system("cls");
+}
 
 //FUNÇÃO DE LISTAR TODOS PRODUTOS CADASTRADO
-void listaproduto(Produtos *Produto)
+void listaproduto(Produtos *Produto,int contProdu)
 {
     int op;
     do
@@ -127,7 +138,11 @@ void listaproduto(Produtos *Produto)
 
         system("cls");
         cout << "\t\tProdutos Cadastrados";
-        for (int i = 0; i < contProdu; i++)
+        //ESSE FOR ESTA FAZENDO UMA VERIFICAÇÃO I E MENOR QUE CONTPRODU 
+        //QUE ESTA SENDO RECEBIDO DE CADASTRAPRODU A QUANTIDADE DE PRODUTOS CADASTRADA
+        //PARA RODA FOR 
+        //PRODUTO[I] VAI RODA A ATRIBUINDO O VALOR DE I NO VETOR
+        for(int i = 0; i < contProdu; i++)
         {
             cout << "\n\n";
             cout << "-----------------------------------------------------\n";
@@ -146,32 +161,27 @@ void listaproduto(Produtos *Produto)
 }
 
 //FUNÇÃO DE BUSCAR PRODUTOS PELO CODIGO
-void buscarProduto(Produtos *Produto, int contProdu)
+int buscarProduto(Produtos *Produto, int contProdu)
 {
-    int Num;
-
+    int i, Num;
     cout << "Digite o codigo do produto: ";
     cin >> Num;
-
-    for (int i = 0; i < contProdu; i++)
+    for (i = 0; i < contProdu; i++)
     {
-
+        //NA VARIAVEL NUM VAI VERIFICAR SE O CODIGO EXISTE
+        //SE NUM FOR IGUAL A O CODIGO VAI RETORNA O VALOR DE I 
         if (Num == Produto[i].codigoProduto)
         {
-            cout << "\t\tProduto do codigo: " << Produto[i].codigoProduto << endl;
-            cout << "--------------------------------------------------------\n";
-            cout << "Produto: " << Produto[i].nomeProduto << endl;
-            cout << "Preco:R$" << Produto[i].precoProduto << endl;
-            cout << "Quantidade: " << Produto[i].quantidadeProduto << endl;
-            cout << "--------------------------------------------------------\n\n";
-            system("pause");
+            return i;
         }
-
     }
     system("cls");
+    //SE O CODIGO NÃO FOR IGUAL ELE VAI RETORNA O -1
+    return -1;
 }
+
 //FUNÇÃO DE VENDAS DOS PRODUTOS
-void vendaProduto(Produtos *Produto)
+void vendaProduto(Produtos *Produto, int contProdu)
 {
     int ven, total, val;
     cout << "Digite o codigo do produto: ";
@@ -179,15 +189,38 @@ void vendaProduto(Produtos *Produto)
 
     for(int i=0; i < contProdu; i++)
     {
+        //VAI VERIFICAR SE O VEN E IGUAL O CODIGO E SE QUANTIDADEPRODUTO E MAIOR DO QUE 0
+        //SE FOR VAI MANDA VOCÊ DIGITA A QUANTIDADE DE PRODUTOS VENDIDOS
         if(ven == Produto[i].codigoProduto && Produto[i].quantidadeProduto > 0)
         {
-            Produto[i].quantidadeProduto--;
-            cout << "\n\n\tProduto '" << Produto[i].nomeProduto << "' vendido com sucesso.\n";
+            cout << "Digite a quantidade de produtos vendidos: ";
+            cin >> total;
+            // VAI VERIFICAR SE A QUANTIDADE DE PRODUTOS DE FOI VENDIDA TEM NO ESTOQUE
+            if(Produto[i].quantidadeProduto >= total)
+            {
+                //SE TIVER A QUANTIDADE VAI TIRA A QUANTIDADE DE PRODUTOS NO ESTOQUE DO QUE FOI VENDIDOS
+                Produto[i].quantidadeProduto = Produto[i].quantidadeProduto - total;
+                cout << "\n\n\tProduto '" << Produto[i].nomeProduto << "' vendido com sucesso.\n";
+                system("pause");
+                system("cls");
+            }
+            else if(Produto[i].quantidadeProduto < total)
+            {
+                cout << "\n\t\tNao tem essa quantidade de produtos no estoque.\n\n";
+                system("pause");
+                system("cls");
+            }
+        }
+        else if(ven == Produto[i].codigoProduto)
+        {
+            cout << "\n\tProduto sem estoque.\n\n";
             system("pause");
             system("cls");
         }
+        else
+        {
 
+        }
     }
     system("cls");
 }
-
